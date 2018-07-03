@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:stretchColumns="1">
+        <TableRow>
+            <TextView
+                android:text="Client Name:"
+                android:textColor="@color/texts"
+                android:textSize="18sp"
+
+                android:padding="3dip" />
+            <TextView
+                android:text=""
+                android:gravity="center"
+                android:textColor="@color/texts"
+                android:textSize="18sp"
+                android:id="@+id/name"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="Phone Number:"
+                android:textColor="@color/texts"
+                android:textSize="18sp"
+                android:padding="3dip" />
+            <TextView
+                android:text=""
+                android:gravity="center"
+                android:id="@+id/phoneNumber"
+                android:textColor="@color/texts"
+                android:textSize="18sp"
+                android:padding="3dip" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="Job Type:"
+                android:textColor="@color/texts"
+                android:textSize="18sp"
+                android:padding="3dip" />
+            <TextView
+                android:text=""
+                android:gravity="center"
+                android:id="@+id/jobType"
+                android:textColor="@color/texts"
+                android:textSize="18sp"
+                android:padding="3dip" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="Description"
+                android:textColor="@color/texts"
+                android:textSize="18sp"
+                android:padding="3dip" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="177dp"
+                android:gravity="start"
+                android:textColor="@color/texts"
+                android:textSize="18sp"
+                android:padding="3dip"
+                android:id="@+id/desc"
+                android:text="" />
+        </TableRow>
+    </TableLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="register">#D35400</color>
+    <color name="login">#2E86C1</color>
+    <color name="texts">#B2BABB</color>
+    <color name="userLogin">#dc7633</color>
+    <color name="reqJob">#28B463</color>
+</resources>
