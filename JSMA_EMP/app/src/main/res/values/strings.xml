@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">JSMA_EMP</string>
+    <string name="app_name">JSMA TECHNICIAN</string>
     <string name="signIn">Login</string>
     <string name="signUp">Register</string>
     <string name="remember_me">Remember me?</string>
