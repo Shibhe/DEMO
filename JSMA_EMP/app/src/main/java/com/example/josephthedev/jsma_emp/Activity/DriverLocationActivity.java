@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -37,6 +38,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -93,22 +96,21 @@ public class DriverLocationActivity extends FragmentActivity implements OnMapRea
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
 
+                    startLocationUpdates();
+                    displayLocation();
+                    Toast.makeText(DriverLocationActivity.this, "You are online", Toast.LENGTH_LONG).show();
+
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            startLocationUpdates();
-                            displayLocation();
-
                             GetJobAssigned assigned = new GetJobAssigned(DriverLocationActivity.this, techLocation.getLatitude(), techLocation.getLongitude());
                             assigned.execute();
-
-                            Toast.makeText(DriverLocationActivity.this, "You are online", Toast.LENGTH_LONG).show();
                         }
-                    }, 9000);
+                    }, 4000);
 
                 } else {
                     currentLocationmMarker.remove();
-                    stopLocationUpdate();
+                    //stopLocationUpdate();
                     Toast.makeText(DriverLocationActivity.this, "You are offline", Toast.LENGTH_LONG).show();
                 }
             }
@@ -305,6 +307,12 @@ public class DriverLocationActivity extends FragmentActivity implements OnMapRea
         mMap.setBuildingsEnabled(false);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.setMyLocationEnabled(true);
+        mMap.addCircle(new CircleOptions()
+                .center(new LatLng(latitude, longitude))
+                .radius(10000)
+                .strokeColor(Color.RED)
+                .fillColor(Color.BLUE));
+
     }
 
     public static String getAddressFromLocation(final double latitude, final double longitude, final Context context) {

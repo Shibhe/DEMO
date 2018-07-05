@@ -10,6 +10,8 @@ import android.location.Geocoder;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,7 +23,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.josephthedev.jsma_emp.Model.User;
 import com.example.josephthedev.jsma_emp.R;
+import com.example.josephthedev.jsma_emp.Service.DoneJobService;
 
 import java.io.IOException;
 import java.util.List;
@@ -40,6 +44,8 @@ public class JobNotificationActivity extends AppCompatActivity {
     String origin = null;
     String destination = null;
 
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,16 +55,12 @@ public class JobNotificationActivity extends AppCompatActivity {
         time = findViewById(R.id.time);
         location = findViewById(R.id.location);
 
-        double lat = Double.parseDouble(sharedPreferences.getString("latitude1", null));
-        double longi = Double.parseDouble(sharedPreferences.getString("longitude1", null));
-
         String name = sharedPreferences.getString("FirstName", null) + " " + sharedPreferences.getString("LastName", null);
         String pNumber = sharedPreferences.getString("PhoneNumber", null);
-
-         origin = getAddressFromLocation(lat, longi, this);
-         destination = sharedPreferences.getString("Location_Name", null);
-
-
+        final String User_ID = sharedPreferences.getString("User_ID", null);
+        final String Job_ID = sharedPreferences.getString("Job_ID", null);
+        final String dur = "10";
+        final String status = "Not done";
 
         if (sharedPreferences != null) {
             try {
@@ -71,44 +73,16 @@ public class JobNotificationActivity extends AppCompatActivity {
         }
 
         time.setText(name + ", " + pNumber);
-        location.setText(sharedPreferences.getString("Location_Name", null));
+        location.setText(sharedPreferences.getString("Location_Name", null) + System.lineSeparator() + sharedPreferences.getString("Required_Date", null));
 
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 r.stop();
-                intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/dir/?api=1&origin=" + origin + "&destination=" + destination + "&travelmode=driving"));
-                startActivity(intent);
+
+                DoneJobService doneJobService = new DoneJobService(JobNotificationActivity.this);
+                doneJobService.execute(Job_ID,User_ID, dur, status);
             }
         });
-    }
-
-    public static String getAddressFromLocation(final double latitude, final double longitude, final Context context) {
-
-        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
-        String result = null;
-        try {
-            List<Address> addressList = geocoder.getFromLocation(latitude, longitude, 1);
-            if (addressList != null && addressList.size() > 0) {
-                Address address = addressList.get(0);
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
-                    sb.append(address.getAddressLine(i)); //.append("\n");
-                }
-
-                sb.append(address.getFeatureName()).append(" ");
-                sb.append(address.getThoroughfare()).append(", ");
-                sb.append(address.getSubLocality()).append(", ");
-                sb.append(address.getLocality()).append(" ");
-                sb.append(address.getPostalCode()).append(" ");
-
-                result = sb.toString();
-            }
-        } catch (IOException e) {
-            Log.e("Location Address Loader", "Unable connect to Geocoder", e);
-        }
-
-        return result;
-
     }
 }

@@ -64,15 +64,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_height="wrap_content" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:text="More information"
-                android:textStyle="italic"
-                android:textColor="@color/login"
-                android:gravity="center"
-                android:onClick="open"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp" />
+
             <Button
                 android:layout_width="match_parent"
                 android:text="Accept"

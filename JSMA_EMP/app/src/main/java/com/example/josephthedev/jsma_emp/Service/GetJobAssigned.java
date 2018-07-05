@@ -50,7 +50,7 @@ public class GetJobAssigned extends AsyncTask<String, String, JSONObject> {
         super.onPreExecute();
 
         progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("\tLoading Nearest Job...");
+        progressDialog.setMessage("\tLoading nearest job...");
         progressDialog.setIndeterminate(false);
         progressDialog.setCancelable(false);
         //progressDialog.setTitle("");
@@ -64,16 +64,9 @@ public class GetJobAssigned extends AsyncTask<String, String, JSONObject> {
         String urls = "http://uncreditable-window.000webhostapp.com/JSMA/sendReqToDriver.php";
         progressDialog = new ProgressDialog(context);
 
-       // ArrayList<NameValuePair> postParameters = new ArrayList<>();
-       // postParameters.add(new BasicNameValuePair("Username", strings[0]));
-       // postParameters.add(new BasicNameValuePair("Password", strings[1]));
-        String res = null;
-
         try {
             response = CustomHttpClient.executeHttpGet(urls);
-            //res = response;
-           // res = res.substring(0);
-            //res = res.substring(res.length() - 1);
+
         } catch (Exception e) {
             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
         }
@@ -84,67 +77,70 @@ public class GetJobAssigned extends AsyncTask<String, String, JSONObject> {
     protected void onPostExecute(JSONObject result) {
         super.onPostExecute(result);
         sharedpreferences = context.getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-
+        int distBetween = 0;
         JSONObject jsonObject;
-        //DatabaseReference driverLocation = FirebaseDatabase.getInstance().getReference().child("driversAvailable");
-        int radius = 2;
+        int staticDistance = 10;
+        int count = 1;
 
         progressDialog.dismiss();
 
-        try {
-            JSONArray jobs = (JSONArray) result.get("clientJobs");
+        while (count < 2){
+            try {
+                JSONArray jobs = (JSONArray) result.get("clientJobs");
 
-            for (int i = 0; i < result.length(); i++){
+                for (int i = 0; i < jobs.length(); i++){
 
-                jsonObject = (JSONObject) jobs.get(i);
+                    jsonObject = (JSONObject) jobs.get(i);
 
-                double lat = Double.parseDouble(jsonObject.getString("Latitude"));
-                double longi = Double.parseDouble(jsonObject.getString("Longitude"));
+                    double lat = Double.parseDouble(jsonObject.getString("Latitude"));
+                    double longi = Double.parseDouble(jsonObject.getString("Longitude"));
 
 
-                double distBetween = distanceBetween(new LatLng(lat, longi), new LatLng(latitude, longitude)) / 1000;
+                    distBetween = distanceBetween(new LatLng(lat, longi), new LatLng(latitude, longitude));
 
-                if (distBetween <= 3000){
-                    SharedPreferences.Editor editor = sharedpreferences.edit();
-                    //navigate to Main Menu
-                    progressDialog.dismiss();
-                    Intent intent = new Intent(context, JobNotificationActivity.class);
-                    user.setFirstName(jsonObject.getString("FirstName"));
-                    user.setLastName(jsonObject.getString("LastName"));
-                    //user.setUsername(jsonObject.getString("Username"));
-                    //user.setRole(jsonObject.getString("Role_Name"));  50000
+                    if (distBetween <= staticDistance){
 
-                    editor.putString("latitude1", String.valueOf(lat));
-                    editor.putString("FirstName", user.getFirstName());
-                    editor.putString("LastName", user.getLastName());
-                    editor.putString("Latitude", jsonObject.getString("Latitude"));
-                    editor.putString("Longitude", jsonObject.getString("Longitude"));
-                    editor.putString("Location_Name", jsonObject.getString("Location_Name"));
-                    editor.putString("PhoneNumber", jsonObject.getString("PhoneNumber"));
-                    editor.putString("Job_Type", jsonObject.getString("Job_Type"));
-                    editor.putString("Description", jsonObject.getString("Description"));
-                    editor.putString("Required_Date", jsonObject.getString("Required_Date"));
-                    editor.putString("longitude1",  String.valueOf(longi));
+                        count++;
 
-                    editor.commit();
-                    context.startActivity(intent);
-                    context.stopService(intent);
-                  // break;
+                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                        //navigate to Main Menu
+                        progressDialog.dismiss();
+                        Intent intent = new Intent(context, JobNotificationActivity.class);
+                        user.setFirstName(jsonObject.getString("FirstName"));
+                        user.setLastName(jsonObject.getString("LastName"));
+
+                        editor.putString("latitude1", String.valueOf(lat));
+                        editor.putString("FirstName", user.getFirstName());
+                        editor.putString("LastName", user.getLastName());
+                        editor.putString("Job_ID", jsonObject.getString("Job_ID"));
+                        editor.putString("Latitude", jsonObject.getString("Latitude"));
+                        editor.putString("Longitude", jsonObject.getString("Longitude"));
+                        editor.putString("Location_Name", jsonObject.getString("Location_Name"));
+                        editor.putString("PhoneNumber", jsonObject.getString("PhoneNumber"));
+                        editor.putString("Job_Type", jsonObject.getString("Job_Type"));
+                        editor.putString("Description", jsonObject.getString("Description"));
+                        editor.putString("Required_Date", jsonObject.getString("Required_Date"));
+                        editor.putString("longitude1",  String.valueOf(longi));
+
+                        editor.commit();
+                        context.startActivity(intent);
+                        context.stopService(intent);
+                        // break;
+                    }
                 }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+            if (count < 2){
+                staticDistance = staticDistance + 1;
+            }
         }
     }
 
-    public static Double distanceBetween(LatLng StartP, LatLng EndP) {
-      /*  if (point1 == null || point2 == null) {
-            return null;
-        }
-        double vw = SphericalUtil.computeDistanceBetween(point1, point2);
+    public static int distanceBetween(LatLng StartP, LatLng EndP) {
 
-        return vw;*/
        int Radius = 6371;// radius of earth in Km
         double lat1 = StartP.latitude;
         double lat2 = EndP.latitude;
@@ -161,12 +157,12 @@ public class GetJobAssigned extends AsyncTask<String, String, JSONObject> {
         double km = valueResult / 1;
         DecimalFormat newFormat = new DecimalFormat("####");
         int kmInDec = Integer.valueOf(newFormat.format(km));
-        double meter = valueResult % 1000;
-        int meterInDec = Integer.valueOf(newFormat.format(meter));
+       // double meter = valueResult % 1000;
+       // int meterInDec = Integer.valueOf(newFormat.format(meter));
 
-        Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
-                + " Meter   " + meterInDec);
+        //Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
+              //  + " Meter   " + meterInDec);
 
-        return Radius * c;
+        return kmInDec;
     }
 }
